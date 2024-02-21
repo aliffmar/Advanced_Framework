@@ -14,4 +14,13 @@ router.get('/contact-us', (req, res) => {
     res.render('landing/contact-us')
 })
 
+router.get('/create', async (req, res) => {
+    const productForm = createProductForm();
+    res.render('products/create',{
+        'form': productForm.toHTML(bootstrapField)
+    })
+})
+
 module.exports = router; // #3 export out the router
+
+const { bootstrapField, createProductForm } = require('../forms'); // import in the Forms
