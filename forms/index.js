@@ -51,4 +51,5 @@ const createProductForm = () => {
     })
 };
 
+
 module.exports = { createProductForm, bootstrapField };

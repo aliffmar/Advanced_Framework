@@ -21,6 +21,29 @@ router.get('/create', async (req, res) => {
     })
 })
 
+router.get('/:product_id/update', async (req, res) => {
+    // retrieve the product
+    const productId = req.params.product_id
+    const product = await Product.where({
+        'id': productId
+    }).fetch({
+        require: true
+    });
+
+    const productForm = createProductForm();
+
+    // fill in the existing values
+    productForm.fields.name.value = product.get('name');
+    productForm.fields.cost.value = product.get('cost');
+    productForm.fields.description.value = product.get('description');
+
+    res.render('products/update', {
+        'form': productForm.toHTML(bootstrapField),
+        'product': product.toJSON()
+    })
+
+})
+
 module.exports = router; // #3 export out the router
 
 const { bootstrapField, createProductForm } = require('../forms'); // import in the Forms
