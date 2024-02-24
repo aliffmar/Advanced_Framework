@@ -3,6 +3,7 @@ const router = express.Router();
 
 // #1 import in the Product model
 const {Product} = require('../models')
+const { bootstrapField, createProductForm } = require('../forms');
 
 
 router.get('/', async (req,res)=>{
@@ -10,6 +11,13 @@ router.get('/', async (req,res)=>{
     let products = await Product.collection().fetch();
     res.render('products/index', {
         'products': products.toJSON() // #3 - convert collection to JSON
+    })
+})
+
+router.get('/create', async (req, res) => {
+    const productForm = createProductForm();
+    res.render('products/create',{
+        'form': productForm.toHTML(bootstrapField)
     })
 })
 
@@ -35,6 +43,7 @@ router.get('/:product_id/update', async (req, res) => {
     })
 
 })
+
 
 //POST
 router.post('/create', async(req,res)=>{

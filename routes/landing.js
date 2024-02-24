@@ -14,13 +14,6 @@ router.get('/contact-us', (req, res) => {
     res.render('landing/contact-us')
 })
 
-router.get('/create', async (req, res) => {
-    const productForm = createProductForm();
-    res.render('products/create',{
-        'form': productForm.toHTML(bootstrapField)
-    })
-})
-
 router.get('/:product_id/update', async (req, res) => {
     // retrieve the product
     const productId = req.params.product_id
