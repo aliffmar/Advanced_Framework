@@ -29,7 +29,7 @@ app.use('/products', productRoutes);
 
 async function main() {
   app.use('/', landingRoutes);
-        
+  app.use('/products', productRoutes);      
     }
 
 
