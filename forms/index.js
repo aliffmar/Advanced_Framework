@@ -1,11 +1,10 @@
-// import in caolan forms
-const forms = require("forms");
-// create some shortcuts
+const forms = require('forms');
+// create some shorts
 const fields = forms.fields;
 const validators = forms.validators;
 const widgets = forms.widgets
 
-var bootstrapField = function (name, object) {
+const bootstrapField = function (name, object) {
     if (!Array.isArray(object.widget.classes)) { object.widget.classes = []; }
 
     if (object.widget.classes.indexOf('form-control') === -1) {
@@ -25,42 +24,44 @@ var bootstrapField = function (name, object) {
     return '<div class="form-group">' + label + widget + error + '</div>';
 };
 
-const createProductForm = (categories) => {
-    return forms.create({
-        'name': fields.string({
+/**
+ * 
+ * @param {*} choices Choice must be an array of nested array, each nested array's index 0 is the ID, and 1 is the name
+ * @returns 
+ */
+const createProductForm = (choices=[], tags=[]) => {
+    // forms.create takes in one argument
+    // it is an object that defines the form
+    // the key will be the `name` of each form field
+    // and the value will be an object that define the field's properties
+    return forms.create({   
+        name: fields.string({
+            required: true,
+            errorAfterField: true
+        }),
+        cost:fields.string({
             required: true,
             errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            }
+            validators:[validators.integer()]
         }),
-        'category_id': fields.string({
-            label:'Category',
+        description: fields.string({
+            required: true,
+            errorAfterField: true
+        }),
+        category_id: fields.string({
+            label: 'Category',
             required: true,
             errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            },
-            widget: widgets.select(),
-            choices: categories
+            widget: widgets.select(), 
+            choices: choices
         }),
-        'cost': fields.string({
+        tags:fields.string({
             required: true,
             errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            },
-            'validators':[validators.integer()]
-        }),
-        'description': fields.string({
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            }
-        }),
+            widget: widgets.multipleSelect(),
+            choices: tags
+        })
     })
-};
+}
 
-
-module.exports = { createProductForm, bootstrapField };
+module.exports = { createProductForm, bootstrapField}
