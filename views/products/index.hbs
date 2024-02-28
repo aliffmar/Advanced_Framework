@@ -1,6 +1,16 @@
 {{#extends "base"}}
 
 {{#block "content"}}
+<div class="search-container">
+    <form action="/products" method="GET" class="form-inline">
+        <div class="form-group">
+            <label for="search">Search:</label>
+            <input type="text" id="search" name="name" class="form-control" placeholder="Enter search query">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -19,11 +29,8 @@
             <td>{{this.description}}</td>
             <td>{{this.category.name}}</td>
             <td>
-                <a href="/products/{{this.id}}/update"
-                    class="btn btn-primary btn-sm"
-                >Update</a>
-                <a href="/products/{{this.id}}/delete"
-                    class="btn btn-danger btn-sm">Delete</a>
+                <a href="/products/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
+                <a href="/products/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
             </td>
         </tr>
         {{/each}}

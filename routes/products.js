@@ -5,30 +5,37 @@ const { createProductForm, bootstrapField } = require('../forms');
 const router = express.Router();
 
 router.get('/', async function (req, res) {
+    let query = Product.collection();
+    
+    // Check if search terms are provided in the query parameters
+    if (req.query.name) {
+        query = query.where('name', 'like', `%${req.query.name}%`);
+    }
+    if (req.query.category_id) {
+        query = query.where('category_id', req.query.category_id);
+    }
+    if (req.query.min_cost) {
+        query = query.where('cost', '>=', req.query.min_cost);
+    }
+    if (req.query.max_cost) {
+        query = query.where('cost', '<=', req.query.max_cost);
+    }
 
-   
+    let products = await query.fetch({ withRelated: ['category'] });
 
-    // Same as SELECT * FROM products
-    let products = await Product.collection().fetch({
-        withRelated:['category'] 
-    });
     res.render("products/index", {
         products: products.toJSON()
-    })
-})
+    });
+});
 
 router.get('/create', async function (req, res) {
-
     const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
-
-    const tags = await Tag.fetchAll().map( tag =>  [tag.get('id'), tag.get('name')]);
-
-
+    const tags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
     const productForm = createProductForm(allCategories, tags);
     res.render('products/create', {
         form: productForm.toHTML(bootstrapField)
-    })
-})
+    });
+});
 
 router.post('/create', async function (req, res) {
     const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
