@@ -1,13 +1,12 @@
 const express = require('express');
 const { Product, Category, Tag } = require('../models');
 const { createProductForm, bootstrapField } = require('../forms');
+const { checkIfAuthenticated } = require('../middlewares');
 
 const router = express.Router();
 
 router.get('/', async function (req, res) {
-
-   
-
+    
     // Same as SELECT * FROM products
     let products = await Product.collection().fetch({
         withRelated:['category'] 
@@ -17,7 +16,7 @@ router.get('/', async function (req, res) {
     })
 })
 
-router.get('/create', async function (req, res) {
+router.get('/create', checkIfAuthenticated, async function (req, res) {
 
     // do a mapping
     // for each category, return an array with two element (index 0 is ID, index 1 is name)
@@ -34,7 +33,7 @@ router.get('/create', async function (req, res) {
     })
 })
 
-router.post('/create', async function (req, res) {
+router.post('/create', checkIfAuthenticated, async function (req, res) {
     const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
     // Get all the Tags and map them into an array of array, and for each inner array, element 0 is ID and element 1 is the name
     const tags = await Tag.fetchAll().map( tag =>  [tag.get('id'), tag.get('name')]);
@@ -44,14 +43,6 @@ router.post('/create', async function (req, res) {
     // start the form processing
     productForm.handle(req, {
         "success": async function (form) {
-            // we want to extract the information
-            // submitted in the form and create a new product
-
-            // If we are referring to the model name (eg. Product)
-            // we are referring to the entire table
-
-            // If we are creating a new instance of the model (like below)
-            // it means we are referring a ROW in the table
             const product = new Product();
             product.set('name', form.data.name);
             product.set('cost', form.data.cost);
@@ -62,18 +53,14 @@ router.post('/create', async function (req, res) {
             await product.save();
 
             let tags = form.data.tags;
-            // the tags will be in comma delimited form
-            // so for example if the user selects ID 3, 5 and 6
-            // then form.data.tags will be "3,5,6"
             if (tags) {
-                // the attach function requires an array of IDs
-                // In this we case, we are attach IDs to the product's tags 
-                // (hence the ID should be tag ids)
-               
                 await product.tags().attach(tags.split(','));
             }
 
+            // IMPORTANT! For Flash messages to work, you must use it before a redirect
+            req.flash("success_messages", "New product has been added");  // req.session.messages.success_messages = [ "New product hass been added"];
             res.redirect('/products');
+  
 
         },
         "error": function (form) {
@@ -136,22 +123,12 @@ router.post('/:product_id/update', async function(req,res)
 
     productForm.handle(req, {
         "success": async function(form) {
-            // product.set('name', form.data.name);
-            // product.set('cost', form.data.cost);
-            // product.set('description', form.data.description);
             let {tags, ...productData} = form.data;
-            // productData will be the original form.data without the `tags` key
             product.set(productData);
             await product.save();
-
-            // update the M:N relationship with tags
             let tagIds = tags.split(",");
-
-            // get and remove all the existing tags
             const existingTagIds = await product.related('tags').pluck('id');
             await product.tags().detach(existingTagIds);
-
-            // Attach all the selected tags to the product
             await product.tags().attach(tagIds);
 
             res.redirect('/products');
@@ -189,6 +166,7 @@ router.post('/:product_id/delete', async function(req,res){
         require: true // if no such product is found, throw an exception
     }); 
     await product.destroy();
+    req.flash("success_messages", "Product has been deleted");
     res.redirect('/products');
 })
 
