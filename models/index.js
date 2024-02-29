@@ -1,10 +1,8 @@
-const bookshelf = require('../bookshelf') 
-
+const bookshelf = require('../bookshelf') // same as requiring ../bookshelf/index.js
 
 const Product = bookshelf.model('Product',{
     tableName:'products',
     category:function() {
-       
         return this.belongsTo('Category'); 
     },
     tags:function() {
