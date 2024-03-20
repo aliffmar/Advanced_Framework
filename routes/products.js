@@ -60,13 +60,9 @@ router.post('/create', async function (req, res) {
             await product.save();
 
             let tags = form.data.tags;
-            // the tags will be in comma delimited form
-            // so for example if the user selects ID 3, 5 and 6
-            // then form.data.tags will be "3,5,6"
+
             if (tags) {
-                // the attach function requires an array of IDs
-                // In this we case, we are attach IDs to the product's tags 
-                // (hence the ID should be tag ids)
+
                
                 await product.tags().attach(tags.split(','));
             }

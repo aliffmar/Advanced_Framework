@@ -1,5 +1,5 @@
 {
-  "name": "1",
+  "name": "y",
   "version": "1.0.0",
   "description": "To start mysql, in the terminal, type in `mysql -u root`",
   "main": "index.js",
