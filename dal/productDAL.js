@@ -5,7 +5,7 @@ async function getAllCategories() {
     return await Category.fetchAll();
 }
 async function getAllProducts() {
-    return await product.fetchAll();
+    return await Product.fetchAll();
 }
 
 async function getAllTags() {
