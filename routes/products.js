@@ -20,10 +20,8 @@ router.get('/create', async function (req, res) {
 
     const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
 
-    // Get all the Tags and map them into an array of array, and for each inner array, element 0 is ID and element 1 is the name
     const tags = await Tag.fetchAll().map( tag =>  [tag.get('id'), tag.get('name')]);
 
-    // create an instance of the form
     const productForm = createProductForm(allCategories, tags);
     res.render('products/create', {
         form: productForm.toHTML(bootstrapField)
@@ -32,12 +30,10 @@ router.get('/create', async function (req, res) {
 
 router.post('/create', async function (req, res) {
     const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
-    // Get all the Tags and map them into an array of array, and for each inner array, element 0 is ID and element 1 is the name
     const tags = await Tag.fetchAll().map( tag =>  [tag.get('id'), tag.get('name')]);
  
  
     const productForm = createProductForm(allCategories, tags);
-    // start the form processing
     productForm.handle(req, {
         "success": async function (form) {
 
@@ -47,7 +43,6 @@ router.post('/create', async function (req, res) {
             product.set('description', form.data.description);
             product.set('category_id', form.data.category_id)
         
-            // save the product first so we use its product
             await product.save();
 
             let tags = form.data.tags;
@@ -58,7 +53,6 @@ router.post('/create', async function (req, res) {
                 await product.tags().attach(tags.split(','));
             }
 
-            // IMPORTANT! For Flash messages to work, you must use it before a redirect
             req.flash("success_messages", "New product has been added");  // req.session.messages.success_messages = [ "New product hass been added"];
             res.redirect('/products');
   
