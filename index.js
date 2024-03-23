@@ -3,7 +3,7 @@ const hbs = require("hbs");
 const wax = require("wax-on");
 require("dotenv").config();
 
-z
+// import in all the dependecies for sessions
 const session = require('express-session');
 const flash = require('connect-flash');
 // indicate that our session will use files for storage
