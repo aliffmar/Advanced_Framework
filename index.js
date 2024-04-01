@@ -51,7 +51,7 @@ app.use(function (req, res, next) {
 
 // CORS middleware configuration
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://main--elaborate-vacherin-f7b17b.netlify.app');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
